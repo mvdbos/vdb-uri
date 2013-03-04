@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/matthijsvandenbos/vdb-uri.png?branch=master)](https://travis-ci.org/matthijsvandenbos/vdb-uri)
+
 README
 ======
 What is VDB\URI?

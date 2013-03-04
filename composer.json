@@ -2,7 +2,7 @@
     "name": "vdb/uri",
     "type": "application",
     "description": "A set of URI classes and a URI parser, based on RFC 3986",
-    "keywords": ["parser, uri, url, http, validator"],
+    "keywords": ["parser", "uri", "url", "http", "validator"],
     "license": "MIT",
     "authors": [
         {
