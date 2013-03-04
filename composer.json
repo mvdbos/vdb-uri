@@ -1,0 +1,23 @@
+{
+    "name": "vdb/uri",
+    "type": "application",
+    "description": "A set of URI classes and a URI parser, based on RFC 3986",
+    "keywords": ["parser, uri, url, http, validator"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matthijs van den Bos",
+            "email": "matthijs@vandenbos.org"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2"
+    },
+    "autoload": {
+        "psr-0": {
+            "VDB\\URI": "src/",
+            "VDB\\URI\\Tests": "tests/"
+        }
+    },
+    "minimum-stability": "dev"
+}
