@@ -4,12 +4,12 @@ README
 ======
 What is VDB\URI?
 ----------------
-A set of URI classes and a URI parser, based on RFC 3986, inspired by java.net.URI.
+A set of URI classes and a URI parser, based on [RFC 3986](https://www.ietf.org/rfc/rfc3986.txt), inspired by java.net.URI.
 
 With it, developers can parse, validate, normalize and compare URIs.
 Once an URI is parsed, developers can use the URI object to get detailed information about the URI.
 
-The parer is a validating parser, that can handle URLs, URNs, and any URI scheme, such as http, mailto, ftp, etc.
+The parser is a validating parser, that can handle URLs, URNs, and any URI scheme, such as http, mailto, ftp, etc.
 
 Installation
 ------------
@@ -29,7 +29,7 @@ Alternatively, you could use a relative URI:
 ```php
 $uri = new HttpURI('/foo/..?bar#baz', 'http://user:pass@example.com?ignored');
 ```
-The we want to get the validated, normalized, recomposed string of the URI:
+Then we want to get the validated, normalized, recomposed string of the URI:
 ```php
 $parsedUriString = $uri->recompose(); // http://user:pass@example.com/?bar#baz
 ```
