@@ -15,7 +15,7 @@ The best way to install VDB\URI is with composer. Find it on http://packagist.or
 
 Usage
 -----
-# Example
+## Example
 
 The first step is creating and URI object. In this example we will be using an HttpURI.
 ```php
@@ -32,10 +32,10 @@ The we want to get the validated, normalized, recomposed string of the URI:
 $parsedUriString = $uri->recompose(); // http://user:pass@example.com/?bar#baz
 ```
 As you can see, among other things, the path was normalized. This makes it easier to compare URIs.
-Instead of calling `recompose()`, you could simple use the URI in a string context
+As an alternative to calling `recompose()`, you could simple use the URI in a string context
 because `__toString()` is implemented as an alias of `recompose()`.
 
-# API
+## API
 
 The basics:
 * `__construct()`
@@ -52,7 +52,7 @@ Accessors
 * `getScheme()`
 * `getUsername()`
 
-# Subclassing GenericURI for specific schemes
+## Subclassing GenericURI for specific schemes
 
 Although the GenericURI class can be used to parse any URI, different URI schemes (http, https, etc.)
 have different rules for what is a valid URI. For example: the HTTP scheme specification states that the path component
