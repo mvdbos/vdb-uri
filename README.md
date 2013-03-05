@@ -13,7 +13,10 @@ The parer is a validating parser, that can handle URLs, URNs, and any URI scheme
 
 Installation
 ------------
-The best way to install VDB\URI is with composer. Find it on http://packagist.org under the name `vdb/uri`.
+The easiest way to install PHP-Spider is by downloading [vdb-uri.phar](https://github.com/matthijsvandenbos/vdb-uri/bin/vdb-uri.phar).
+Then you only have to require the Phar file to begin using VDB\URI: `require_once '/path/to/vdb-uri.phar';`
+
+A more flexible way to install VDB\URI is with composer. That way you can keep control over which version you use. Find it on http://packagist.org under the name `vdb/uri`.
 
 Usage
 -----
@@ -82,8 +85,8 @@ See the HttpURI class for an example implementation.
 
 TODO
 ----
-- [] implement `URI::compare(URI $uri)` public method
-- [] implement percentage encoding normalization for username and pass and host
-- [] implement validations for all components. Check java.net.URI for reference
-- [] refactor: separate classes for parser and URI (value object with DI for parser (+ DI defaults))
-- [] add more tests based on C uriparser tests from sourceforge
+- implement `URI::compare(URI $uri)` public method
+- implement percentage encoding normalization for username and pass and host
+- implement validations for all components. Check java.net.URI for reference
+- refactor: separate classes for parser and URI (value object with DI for parser (+ DI defaults))
+- test: add more tests based on C uriparser tests from sourceforge
