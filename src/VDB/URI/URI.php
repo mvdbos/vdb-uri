@@ -16,7 +16,7 @@ interface URI
     public function __construct($uri, $baseUri = null);
 
     /**
-     * Returns the content of this URI as a string.
+     * Recomposes the components of this URI as a string.
      *
      * A string equivalent to the original input string, or to the
      * string computed from the original string, as appropriate, is
@@ -26,10 +26,22 @@ interface URI
      *
      * @return string The string form of this URI
      */
-    public function recompose();
+    public function toString();
 
     /**
-     * Alias of URI::recompose()
+     * @param URI $that
+     * @param boolean $normalized whether to compare normalized versions of the URIs
+     * @return boolean
+     */
+    public function equals(URI $that, $normalized = false);
+
+    /**
+     * @return URI
+     */
+    public function normalize();
+
+    /**
+     * Alias of URI::toString()
      *
      * @return string
      */

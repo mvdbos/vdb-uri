@@ -36,18 +36,23 @@ $uri = new HttpURI('/foo/..?bar#baz', 'http://user:pass@example.com?ignored');
 ```
 Then we want to get the validated, normalized, recomposed string of the URI:
 ```php
-$parsedUriString = $uri->recompose(); // http://user:pass@example.com/?bar#baz
+$parsedUriString = $uri->toString(); // http://user:pass@example.com/?bar#baz
 ```
-As you can see, among other things, the path was normalized. This makes it easier to compare URIs.
-As an alternative to calling `recompose()`, you could simple use the URI in a string context
-because `__toString()` is implemented as an alias of `recompose()`.
+As an alternative to calling `toString()`, you could simple use the URI in a string context
+because `__toString()` is implemented as an alias of `toString()`.
 
 ## API
 
 The basics:
 * `__construct()`
 * `__toString()`
-* `recompose()`
+* `toString()`
+
+Normalization
+* `normalize()`
+
+Comparison
+* `equals(URI $uri, $normalized)
 
 Accessors
 * `getFragment()`

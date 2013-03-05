@@ -16,11 +16,13 @@ use VDB\URI\Exception\UriSyntaxException;
  */
 class HttpURI extends GenericURI
 {
-    public static $allowedSchemes = array('http');
+    public static $allowedSchemes = array('http', 'https');
+    public static $defaultPorts = array('http' => 80, 'https' => 443);
 
     protected function validateScheme()
     {
         parent::validateScheme();
+        $this->normalizeSchemeCase();
         if (!in_array($this->scheme, static::$allowedSchemes)) {
             throw new UriSyntaxException('Only HTTP scheme allowed');
         }

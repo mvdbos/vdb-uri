@@ -14,6 +14,8 @@ use VDB\URI\URI;
  */
 class GenericURI implements URI
 {
+    public static $defaultPorts = array();
+
     /** @var string */
     const UNRESERVED = '0-9a-zA-Z\-\._~';
 
@@ -88,7 +90,7 @@ class GenericURI implements URI
     }
 
     /**
-     * Returns the content of this URI as a string.
+     * Recomposes the components of this URI as a string.
      *
      * A string equivalent to the original input string, or to the
      * string computed from the original string, as appropriate, is
@@ -126,7 +128,7 @@ class GenericURI implements URI
      *
      * return result;
      */
-    public function recompose()
+    public function toString()
     {
         if (null === $this->composedURI) {
             $this->composedURI = '';
@@ -165,13 +167,45 @@ class GenericURI implements URI
     }
 
     /**
+     * Test two URIs for equality. Will return true if and only if all URI components are identical.
+     * Note: will use the normalized versions of the URI's to compare
+     *
+     * @param URI $that
+     * @param bool $normalized wheter the comparison will be done on normalized versions of the URIs
+     * @return bool
+     */
+    public function equals(URI $that, $normalized = false)
+    {
+        $thisClone = $this;
+        $thatClone = $that;
+
+        if (false !== $normalized) {
+            $thisClone = clone $this;
+            $thatClone = clone $that;
+            $thisClone->normalize();
+            $thatClone->normalize();
+        }
+
+        if ($thisClone->getScheme() !== $thatClone->getScheme()) { return false; }
+        if ($thisClone->getUsername() !== $thatClone->getUsername()) { return false; }
+        if ($thisClone->getPassword() !== $thatClone->getPassword()) { return false; }
+        if ($thisClone->getHost() !== $thatClone->getHost()) { return false; }
+        if ($thisClone->getPort() !== $thatClone->getPort()) { return false; }
+        if ($thisClone->getPath() !== $thatClone->getPath()) { return false; }
+        if ($thisClone->getQuery() !== $thatClone->getQuery()) { return false; }
+        if ($thisClone->getFragment() !== $thatClone->getFragment()) { return false; }
+
+        return true;
+    }
+
+    /**
      * Alias of GenericURI::recompose()
      *
      * @return string
      */
     public function __toString()
     {
-        return $this->recompose();
+        return $this->toString();
     }
 
     public function getHost()
@@ -214,8 +248,163 @@ class GenericURI implements URI
         return $this->fragment;
     }
 
+    public function normalize()
+    {
+        $this->normalizeSchemeCase();
+        $this->normalizeUsernamePercentageEncoding();
+        $this->normalizePasswordPercentageEncoding();
+        $this->normalizeHostCase();
+        $this->normalizePort();
+        $this->normalizePathPercentageEncoding();
+        $this->normalizeDotSegments();
+        $this->normalizeQueryPercentageEncoding();
+        $this->normalizeFragmentPercentageEncoding();
+
+        return $this;
+    }
+
     protected function doSchemeSpecificPostProcessing()
     {
+    }
+
+    protected function validateAuthority()
+    {
+    }
+
+    protected function validateFragment()
+    {
+    }
+
+    protected function validateOriginalUrlString()
+    {
+    }
+
+    protected function validatePassword()
+    {
+    }
+
+    protected function validatePath()
+    {
+        if (null === $this->authority) {
+            if ('//' === substr($this->path, 0, 2)) {
+                throw new UriSyntaxException(
+                    "Invalid path: '" . $this->path . "'. Can't begin with '//' if no authority was found"
+                );
+            }
+        } else {
+            if (!empty($this->path) && '/' !== substr($this->path, 0, 1)) {
+                throw new UriSyntaxException("Invalid path: '" . $this->path);
+            }
+        }
+    }
+
+    protected function validateQuery()
+    {
+    }
+
+    protected function validateScheme()
+    {
+        $schemeValidated = preg_match('/^[a-z]{1}[a-z0-9\+\-\.]*$/i', $this->scheme);
+        if ($schemeValidated === 0 || $schemeValidated === false) {
+            throw new UriSyntaxException('Invalid scheme: ' . $this->scheme);
+        }
+    }
+
+    protected function validateUserInfo()
+    {
+    }
+
+    protected function validateUsername()
+    {
+    }
+
+    protected function validateHost()
+    {
+    }
+
+    protected function validatePort()
+    {
+        if (empty($this->port)) {
+            throw new UriSyntaxException("Port must not be empty");
+        }
+        if (!preg_match('/^[0-9]+$/', $this->port)) {
+            throw new UriSyntaxException("Port must be numeric: '" . $this->port . "'");
+        }
+    }
+
+    protected function normalizePasswordPercentageEncoding()
+    {
+    }
+
+    protected function normalizePathPercentageEncoding()
+    {
+        if (null !== $this->path) {
+            $regex = '/[^' . self::PCHAR . ']/';
+            $segments = explode('/', $this->path);
+            foreach ($segments as &$segment) {
+                $chars = str_split(urldecode($segment));
+                for ($i=0; $i < count($chars); $i++) {
+                    if (preg_match($regex, $chars[$i])) {
+                        array_splice($chars, $i, 1, rawurlencode($chars[$i]));
+                    }
+                }
+                $segment = implode('', $chars);
+            }
+            $this->path = implode('/', $segments);
+        }
+    }
+
+    protected function normalizeQueryPercentageEncoding()
+    {
+        if (null !== $this->query) {
+            $regex = '/[^' . self::QUERY_OR_FRAGMENT . ']/';
+            $query = str_split(urldecode($this->query));
+            for ($i=0; $i < count($query); $i++) {
+                if (preg_match($regex, $query[$i])) {
+                    array_splice($query, $i, 1, rawurlencode($query[$i]));
+                }
+            }
+            $this->query = implode('', $query);
+
+        }
+    }
+
+    protected function normalizeFragmentPercentageEncoding()
+    {
+        if (null !== $this->fragment) {
+            $regex = '/[^' . self::QUERY_OR_FRAGMENT . ']/';
+            $fragment = str_split(urldecode($this->fragment));
+            for ($i=0; $i < count($fragment); $i++) {
+                if (preg_match($regex, $fragment[$i])) {
+                    array_splice($fragment, $i, 1, rawurlencode($fragment[$i]));
+                }
+            }
+            $this->fragment = implode('', $fragment);
+        }
+    }
+
+    protected function normalizeUsernamePercentageEncoding()
+    {
+    }
+
+    protected function normalizeSchemeCase()
+    {
+        $this->scheme = strtolower($this->scheme);
+    }
+
+    protected function normalizeHostCase()
+    {
+        $this->host = strtolower($this->host);
+    }
+
+    protected function normalizePort()
+    {
+        if (null !== $this->scheme
+            && isset(static::$defaultPorts[$this->scheme])
+            && ($this->getPort() === static::$defaultPorts[$this->scheme])
+        ) {
+            $this->port = null;
+        }
     }
 
     /**
@@ -404,7 +593,7 @@ class GenericURI implements URI
     private function parseScheme()
     {
         if (false !== $pos = strpos($this->remaining, ':')) {
-            $this->scheme = strtolower(substr($this->remaining, 0, $pos));
+            $this->scheme = substr($this->remaining, 0, $pos);
             $this->validateScheme();
             // we do + 1 because we need to also skip the ':' character after the scheme
             $this->remaining = substr($this->remaining, strlen($this->scheme) + 1);
@@ -436,7 +625,6 @@ class GenericURI implements URI
         }
         $this->validatePath();
         $this->remaining = substr($this->remaining, strlen($this->path));
-        $this->normalizePathPercentageEncoding(); // do this after calculating remaining...
     }
 
     private function parseQuery()
@@ -449,7 +637,6 @@ class GenericURI implements URI
             $this->query = $this->scanUntilFirstOf($this->remaining, '#');
             $this->validateQuery();
             $this->remaining = substr($this->remaining, strlen($this->query));
-            $this->normalizeQueryPercentageEncoding(); // do this after calculating remaining...
         }
     }
 
@@ -463,7 +650,6 @@ class GenericURI implements URI
             $this->fragment = $this->remaining;
             $this->validateFragment();
             $this->remaining = '';
-            $this->normalizeFragmentPercentageEncoding(); // do this after calculating remaining...
         }
     }
 
@@ -481,7 +667,6 @@ class GenericURI implements URI
     private function parseAbsoluteUri()
     {
         $this->parseUriReference();
-        $this->normalizeDotSegments();
     }
 
     /**
@@ -520,12 +705,10 @@ class GenericURI implements URI
             if (false !== strpos($this->userInfo, ':')) {
                 list($this->username, $this->password) = explode(':', $this->userInfo);
                 $this->validatePassword();
-                $this->normalizePasswordPercentageEncoding();
             } else {
                 $this->username = $this->userInfo;
             }
             $this->validateUsername();
-            $this->normalizeUsernamePercentageEncoding();
             $remaining = substr($remaining, strlen($this->userInfo) + 1);
         }
 
@@ -535,129 +718,15 @@ class GenericURI implements URI
 
         // There is a port
         if (false !== $colonPos = strrpos($remaining, ':')) {
-            $this->host = strtolower(substr($remaining, 0, $colonPos));
+            $this->host = substr($remaining, 0, $colonPos);
             $this->validateHost();
             // we do + 1 because we need to skip the ':' character
             $this->port = substr($remaining, $colonPos + 1);
             $this->port = (int)$this->port;
             $this->validatePort();
         } else {
-            $this->host = strtolower($remaining);
+            $this->host = $remaining;
         }
-    }
-
-    protected function validateAuthority()
-    {
-    }
-
-    protected function validateFragment()
-    {
-    }
-
-    protected function validateOriginalUrlString()
-    {
-    }
-
-    protected function validatePassword()
-    {
-    }
-
-    protected function validatePath()
-    {
-        if (null === $this->authority) {
-            if ('//' === substr($this->path, 0, 2)) {
-                throw new UriSyntaxException(
-                    "Invalid path: '" . $this->path . "'. Can't begin with '//' if no authority was found"
-                );
-            }
-        } else {
-            if (!empty($this->path) && '/' !== substr($this->path, 0, 1)) {
-                throw new UriSyntaxException("Invalid path: '" . $this->path);
-            }
-        }
-    }
-
-    protected function validateQuery()
-    {
-    }
-
-    protected function validateScheme()
-    {
-        $schemeValidated = preg_match('/^[a-z]{1}[a-z0-9\+\-\.]*$/', $this->scheme);
-        if ($schemeValidated === 0 || $schemeValidated === false) {
-            throw new UriSyntaxException('Invalid scheme: ' . $this->scheme);
-        }
-    }
-
-    protected function validateUserInfo()
-    {
-    }
-
-    protected function validateUsername()
-    {
-    }
-
-    protected function validateHost()
-    {
-    }
-
-    protected function validatePort()
-    {
-        if (empty($this->port)) {
-            throw new UriSyntaxException("Port must not be empty");
-        }
-        if (!preg_match('/^[0-9]+$/', $this->port)) {
-            throw new UriSyntaxException("Port must be numeric: '" . $this->port . "'");
-        }
-    }
-
-    protected function normalizePasswordPercentageEncoding()
-    {
-    }
-
-    protected function normalizePathPercentageEncoding()
-    {
-        $regex = '/[^' . self::PCHAR . ']/';
-
-        $segments = explode('/', $this->path);
-        foreach ($segments as &$segment) {
-            $chars = str_split(urldecode($segment));
-            for ($i=0; $i < count($chars); $i++) {
-                if (preg_match($regex, $chars[$i])) {
-                    array_splice($chars, $i, 1, rawurlencode($chars[$i]));
-                }
-            }
-            $segment = implode('', $chars);
-        }
-        $this->path = implode('/', $segments);
-    }
-
-    protected function normalizeQueryPercentageEncoding()
-    {
-        $regex = '/[^' . self::QUERY_OR_FRAGMENT . ']/';
-        $query = str_split(urldecode($this->query));
-        for ($i=0; $i < count($query); $i++) {
-            if (preg_match($regex, $query[$i])) {
-                array_splice($query, $i, 1, rawurlencode($query[$i]));
-            }
-        }
-        $this->query = implode('', $query);
-    }
-
-    protected function normalizeFragmentPercentageEncoding()
-    {
-        $regex = '/[^' . self::QUERY_OR_FRAGMENT . ']/';
-        $fragment = str_split(urldecode($this->fragment));
-        for ($i=0; $i < count($fragment); $i++) {
-            if (preg_match($regex, $fragment[$i])) {
-                array_splice($fragment, $i, 1, rawurlencode($fragment[$i]));
-            }
-        }
-        $this->fragment = implode('', $fragment);
-    }
-
-    protected function normalizeUsernamePercentageEncoding()
-    {
     }
 
     private function scanUntilFirstOf($string, $characters)

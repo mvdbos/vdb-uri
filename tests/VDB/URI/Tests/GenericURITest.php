@@ -34,8 +34,9 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
     public function testNormalizePercentEncoding($uri, $expected)
     {
         $uri = new GenericURI($uri);
+        $uri->normalize();
 
-        $this->assertEquals($expected, $uri->recompose());
+        $this->assertEquals($expected, $uri->toString());
     }
 
     /**
@@ -44,8 +45,9 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
     public function testNormalizeCase($uri, $expected)
     {
         $uri = new GenericURI($uri);
+        $uri->normalize();
 
-        $this->assertEquals($expected, $uri->recompose());
+        $this->assertEquals($expected, $uri->toString());
     }
 
     /**
@@ -98,7 +100,7 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
     {
         $uri = new GenericURI($relative, $base);
 
-        $this->assertEquals($expected, $uri->recompose());
+        $this->assertEquals($expected, $uri->toString());
     }
 
     /**
@@ -135,7 +137,7 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
     {
         $uri = new GenericURI($relative, $base);
 
-        $this->assertEquals($expected, $uri->recompose());
+        $this->assertEquals($expected, $uri->toString());
     }
 
     /**
@@ -159,13 +161,21 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Now that normalization is no longer default, we need to test absolute URI normalization separately
+     */
+    public function testAbsoluteUriDotSegments()
+    {
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * @dataProvider abnormalRelativeReferenceDotSegmentsProvider
      */
     public function testAbnormalRelativeReferenceDotSegments($relative, $base, $expected)
     {
         $uri = new GenericURI($relative, $base);
 
-        $this->assertEquals($expected, $uri->recompose());
+        $this->assertEquals($expected, $uri->toString());
     }
 
     /**
@@ -210,6 +220,24 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return array
+     * All taken rom RFC 3986
+     */
+    public function hostURIProvider()
+    {
+        return array(
+            array('ftp:', ''),
+            array('ftp://ftp.is.co.za/rfc/rfc1808.txt', 'ftp.is.co.za'),
+            array('mailto:John.Doe@example.com', ''),
+            array('news:comp.infosystems.www.servers.unix', ''),
+            array('tel:+1-816-555-1212', ''),
+            array('telnet://192.0.2.16:80/', '192.0.2.16'),
+            array('urn:oasis:names:specification:docbook:dtd:xml:4.1.2', ''),
+            array('foo://example.com:8042/over/there?name=ferret#nose', 'example.com'),
+        );
+    }
+
+    /**
      * @expectedException VDB\URI\Exception\UriSyntaxException
      * @dataProvider noIpSixURIProvider
      */
@@ -230,21 +258,13 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @return array
-     * All taken rom RFC 3986
-     */
-    public function hostURIProvider()
+    public function testEqualsNormal()
     {
-        return array(
-            array('ftp:', ''),
-            array('ftp://ftp.is.co.za/rfc/rfc1808.txt', 'ftp.is.co.za'),
-            array('mailto:John.Doe@example.com', ''),
-            array('news:comp.infosystems.www.servers.unix', ''),
-            array('tel:+1-816-555-1212', ''),
-            array('telnet://192.0.2.16:80/', '192.0.2.16'),
-            array('urn:oasis:names:specification:docbook:dtd:xml:4.1.2', ''),
-            array('foo://example.com:8042/over/there?name=ferret#nose', 'example.com'),
-        );
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    public function testEqualsNormalized()
+    {
+        $this->markTestIncomplete('Not implemented');
     }
 }
