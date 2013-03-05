@@ -4,19 +4,21 @@ README
 ======
 What is VDB\URI?
 ----------------
-A set of URI classes and a URI parser, based on RFC 3986, inspired by java.net.URI.
+A set of URI classes and a URI parser, based on [RFC 3986](https://www.ietf.org/rfc/rfc3986.txt), inspired by java.net.URI.
 
 With it, developers can parse, validate, normalize and compare URIs.
 Once an URI is parsed, developers can use the URI object to get detailed information about the URI.
 
-The parer is a validating parser, that can handle URLs, URNs, and any URI scheme, such as http, mailto, ftp, etc.
+The parser is a validating parser, that can handle URLs, URNs, and any URI scheme, such as http, mailto, ftp, etc.
+
+It is easy to create your own URI classes for specific URI schemes by extending the GenericURI, or if you are feeling adventurous, implementing the URI interface.
 
 Installation
 ------------
 The easiest way to install PHP-Spider is by downloading [vdb-uri.phar](https://github.com/matthijsvandenbos/vdb-uri/bin/vdb-uri.phar).
 Then you only have to require the Phar file to begin using VDB\URI: `require_once '/path/to/vdb-uri.phar';`
 
-A more flexible way to install VDB\URI is with composer. That way you can keep control over which version you use. Find it on http://packagist.org under the name `vdb/uri`.
+A more flexible way to install VDB\URI is with [composer](http://getcomposer.org/). That way you can keep control over which version you use. Find it on http://packagist.org under the name `vdb/uri`.
 
 Usage
 -----
@@ -32,7 +34,7 @@ Alternatively, you could use a relative URI:
 ```php
 $uri = new HttpURI('/foo/..?bar#baz', 'http://user:pass@example.com?ignored');
 ```
-The we want to get the validated, normalized, recomposed string of the URI:
+Then we want to get the validated, normalized, recomposed string of the URI:
 ```php
 $parsedUriString = $uri->recompose(); // http://user:pass@example.com/?bar#baz
 ```
@@ -68,7 +70,7 @@ There are a few methods you can override in your subclass:
 Scheme specific post processing:
 * `doSchemeSpecificPostProcessing()`. In here you can do anything you like with the parsed component values
 
-Validators, should throw `VDB\URI\UriSyntaxException` if the component value is invalid:
+Validators. Should throw `VDB\URI\UriSyntaxException` if the component value is invalid:
 * `validateAuthority()`
 * `validateFragment()`
 * `validateHost()`
@@ -82,6 +84,10 @@ Validators, should throw `VDB\URI\UriSyntaxException` if the component value is 
 * `validateUsername()`
 
 See the HttpURI class for an example implementation.
+
+## Usage tips
+If you want to use type hinting (you should) on VDB\URI classes in your application, you can should use the URI interface for that instead of the GenericURI class.
+That way, your application will support switching out different implementations of URI classes without any refactoring.      
 
 TODO
 ----
