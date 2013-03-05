@@ -91,8 +91,4 @@ That way, your application will support switching out different implementations 
 
 TODO
 ----
-- implement `URI::compare(URI $uri)` public method
-- implement percentage encoding normalization for username and pass and host
-- implement validations for all components. Check java.net.URI for reference
-- refactor: separate classes for parser and URI (value object with DI for parser (+ DI defaults))
-- test: add more tests based on C uriparser tests from sourceforge
+For a list of todo's check the issues in milestone feature-complete [here](https://github.com/matthijsvandenbos/vdb-uri/issues?direction=asc&milestone=1&page=1&sort=created&state=open).
