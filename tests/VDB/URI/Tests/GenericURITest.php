@@ -29,71 +29,6 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider normalizePercentEncodingProvider
-     */
-    public function testNormalizePercentEncoding($uri, $expected)
-    {
-        $uri = new GenericURI($uri);
-        $uri->normalize();
-
-        $this->assertEquals($expected, $uri->toString());
-    }
-
-    /**
-     * @dataProvider normalizeCaseProvider
-     */
-    public function testNormalizeCase($uri, $expected)
-    {
-        $uri = new GenericURI($uri);
-        $uri->normalize();
-
-        $this->assertEquals($expected, $uri->toString());
-    }
-
-    /**
-     * @return array
-     */
-    public function normalizeCaseProvider()
-    {
-        return array(
-            array("HTTP://foo/bar", "http://foo/bar"),
-            array("http://FOO/bar", "http://foo/bar"),
-            array("http://foo/bar?BAZ", "http://foo/bar?BAZ"),
-            array("http://foo/bar#BAZ", "http://foo/bar#BAZ"),
-            array("http://USER@foo/bar", "http://USER@foo/bar"),
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function normalizePercentEncodingProvider()
-    {
-        return array(
-            //paths
-            array("http://foo/%20bar", "http://foo/%20bar"),
-            array("http://foo/+bar", "http://foo/%20bar"),
-            array("http://foo/ bar", "http://foo/%20bar"),
-            array("http://foo/[bar", "http://foo/%5Bbar"),
-            array("http://foo/%5bbar", "http://foo/%5Bbar"),
-
-            //queries
-            array("http://foo/?%20bar", "http://foo/?%20bar"),
-            array("http://foo/?+bar", "http://foo/?%20bar"),
-            array("http://foo/? bar", "http://foo/?%20bar"),
-            array("http://foo/?[bar", "http://foo/?%5Bbar"),
-            array("http://foo/?%5bbar", "http://foo/?%5Bbar"),
-            
-            //fragments
-            array("http://foo/#%20bar", "http://foo/#%20bar"),
-            array("http://foo/#+bar", "http://foo/#%20bar"),
-            array("http://foo/# bar", "http://foo/#%20bar"),
-            array("http://foo/#[bar", "http://foo/#%5Bbar"),
-            array("http://foo/#%5bbar", "http://foo/#%5Bbar"),
-        );
-    }
-
-    /**
      * @dataProvider relativeReferenceProvider
      */
     public function testRelativeReferenceNormal($relative, $base, $expected)
@@ -127,84 +62,6 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
             array("g;x", 'http://a/b/c/d;p?q', "http://a/b/c/g;x"),
             array("g;x?y#s", 'http://a/b/c/d;p?q', "http://a/b/c/g;x?y#s"),
             array("", 'http://a/b/c/d;p?q', "http://a/b/c/d;p?q"),
-        );
-    }
-
-    /**
-     * @dataProvider relativeReferenceDotSegmentsProvider
-     */
-    public function testRelativeReferenceDotSegments($relative, $base, $expected)
-    {
-        $uri = new GenericURI($relative, $base);
-
-        $this->assertEquals($expected, $uri->toString());
-    }
-
-    /**
-     * @return array
-     *
-     * From RFC 3986 paragraph 5.4
-     */
-    public function relativeReferenceDotSegmentsProvider()
-    {
-        return array(
-            array("./g", 'http://a/b/c/d;p?q', "http://a/b/c/g"),
-            array(".", 'http://a/b/c/d;p?q', "http://a/b/c/"),
-            array("./", 'http://a/b/c/d;p?q', "http://a/b/c/"),
-            array("..", 'http://a/b/c/d;p?q', "http://a/b/"),
-            array("../", 'http://a/b/c/d;p?q', "http://a/b/"),
-            array("../g", 'http://a/b/c/d;p?q', "http://a/b/g"),
-            array("../..", 'http://a/b/c/d;p?q', "http://a/"),
-            array("../../", 'http://a/b/c/d;p?q', "http://a/"),
-            array("../../g", 'http://a/b/c/d;p?q', "http://a/g"),
-        );
-    }
-
-    /**
-     * Now that normalization is no longer default, we need to test absolute URI normalization separately
-     */
-    public function testAbsoluteUriDotSegments()
-    {
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * @dataProvider abnormalRelativeReferenceDotSegmentsProvider
-     */
-    public function testAbnormalRelativeReferenceDotSegments($relative, $base, $expected)
-    {
-        $uri = new GenericURI($relative, $base);
-
-        $this->assertEquals($expected, $uri->toString());
-    }
-
-    /**
-     * @return array
-     *
-     * From RFC 3986 paragraph 5.4.2
-     */
-    public function abnormalRelativeReferenceDotSegmentsProvider()
-    {
-        return array(
-            array("../../../g", 'http://a/b/c/d;p?q', "http://a/g"),
-            array("../../../../g", 'http://a/b/c/d;p?q', "http://a/g"),
-            array("/../../../../g", 'http://a/b/c/d;p?q', "http://a/g"),
-            array("/./g", 'http://a/b/c/d;p?q', "http://a/g"),
-            array("/../g", 'http://a/b/c/d;p?q', "http://a/g"),
-            array("g.", 'http://a/b/c/d;p?q', "http://a/b/c/g."),
-            array(".g", 'http://a/b/c/d;p?q', "http://a/b/c/.g"),
-            array("g..", 'http://a/b/c/d;p?q', "http://a/b/c/g.."),
-            array("..g", 'http://a/b/c/d;p?q', "http://a/b/c/..g"),
-            array("./../g", 'http://a/b/c/d;p?q', "http://a/b/g"),
-            array("./g/.", 'http://a/b/c/d;p?q', "http://a/b/c/g/"),
-            array("g/./h", 'http://a/b/c/d;p?q', "http://a/b/c/g/h"),
-            array("g/../h", 'http://a/b/c/d;p?q', "http://a/b/c/h"),
-            array("g;x=1/./y", 'http://a/b/c/d;p?q', "http://a/b/c/g;x=1/y"),
-            array("g;x=1/../y", 'http://a/b/c/d;p?q', "http://a/b/c/y"),
-            array("g?y/./x", 'http://a/b/c/d;p?q', "http://a/b/c/g?y/./x"),
-            array("g?y/../x", 'http://a/b/c/d;p?q', "http://a/b/c/g?y/../x"),
-            array("g#s/./x", 'http://a/b/c/d;p?q', "http://a/b/c/g#s/./x"),
-            array("g#s/../x", 'http://a/b/c/d;p?q', "http://a/b/c/g#s/../x"),
         );
     }
 
@@ -258,13 +115,76 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testEqualsNormal()
+    /**
+     * @dataProvider equalsNotNormalizedURIProvider
+     */
+    public function testEqualsNotNormalized($uri1, $uri2)
     {
-        $this->markTestIncomplete('Not implemented');
+        $uri = new GenericURI($uri1);
+        $this->assertTrue($uri->equals(new GenericURI($uri2)));
     }
 
-    public function testEqualsNormalized()
+    /**
+     * @dataProvider notEqualsNotNormalizedURIProvider
+     */
+    public function testNotEqualsNotNormalized($uri1, $uri2)
     {
-        $this->markTestIncomplete('Not implemented');
+        $uri = new GenericURI($uri1);
+        $this->assertFalse($uri->equals(new GenericURI($uri2)));
+    }
+
+    public function equalsNotNormalizedURIProvider()
+    {
+        return array(
+
+            // dotsegments
+            array('http://a/b/c/../d;p?q', 'http://a/b/c/../d;p?q'),
+            array('http://a/b/c/./d;p?q', 'http://a/b/c/./d;p?q'),
+
+            // percent encoding
+            array("http://foo/%20bar", "http://foo/%20bar"),
+            array("http://foo/[bar", "http://foo/[bar"),
+            array("http://foo/%5Bbar", "http://foo/%5Bbar"),
+
+            //queries
+            array("http://foo/?%20bar", "http://foo/?%20bar"),
+            array("http://foo/?%5Bbar", "http://foo/?%5Bbar"),
+
+            //fragments
+            array("http://foo/#%20bar", "http://foo/#%20bar"),
+            array("http://foo/#%5Bbar", "http://foo/#%5Bbar"),
+
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function notEqualsNotNormalizedURIProvider()
+    {
+        return array(
+
+            // dotsegments
+            array('http://a/b/c/../d;p?q', 'http://a/b/d;p?q'),
+            array('http://a/b/c/./d;p?q', 'http://a/b/c/d;p?q'),
+
+            // paths
+            array("http://foo/ bar", "http://foo/%20bar"),
+            array("http://foo/[bar", "http://foo/%5Bbar"),
+            array("http://foo/%5bbar", "http://foo/%5Bbar"),
+
+            //queries
+            array("http://foo/?+bar", "http://foo/?%20bar"),
+            array("http://foo/? bar", "http://foo/?%20bar"),
+            array("http://foo/?[bar", "http://foo/?%5Bbar"),
+            array("http://foo/?%5bbar", "http://foo/?%5Bbar"),
+
+            //fragments
+            array("http://foo/#+bar", "http://foo/#%20bar"),
+            array("http://foo/# bar", "http://foo/#%20bar"),
+            array("http://foo/#[bar", "http://foo/#%5Bbar"),
+            array("http://foo/#%5bbar", "http://foo/#%5Bbar"),
+
+        );
     }
 }
