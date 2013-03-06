@@ -1,7 +1,7 @@
 tools:                
     php_mess_detector:
         enabled: true
-        command: /usr/local/Cellar/php54/5.4.11/bin/phpmd
+        command: vendor/bin/phpmd
         filter:               
             paths: [src/*, tests/*]
     php_cs_fixer: 
