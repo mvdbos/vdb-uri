@@ -188,30 +188,37 @@ class GenericURI implements URI
 
         if ($thisClone->getScheme() !== $thatClone->getScheme()) {
             return false;
+        } else {
+            if ($thisClone->getUsername() !== $thatClone->getUsername()) {
+                return false;
+            } else {
+                if ($thisClone->getPassword() !== $thatClone->getPassword()) {
+                    return false;
+                } else {
+                    if ($thisClone->getHost() !== $thatClone->getHost()) {
+                        return false;
+                    } else {
+                        if ($thisClone->getPort() !== $thatClone->getPort()) {
+                            return false;
+                        } else {
+                            if ($thisClone->getPath() !== $thatClone->getPath()) {
+                                return false;
+                            } else {
+                                if ($thisClone->getQuery() !== $thatClone->getQuery()) {
+                                    return false;
+                                } else {
+                                    if ($thisClone->getFragment() !== $thatClone->getFragment()) {
+                                        return false;
+                                    } else {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-        if ($thisClone->getUsername() !== $thatClone->getUsername()) {
-            return false;
-        }
-        if ($thisClone->getPassword() !== $thatClone->getPassword()) {
-            return false;
-        }
-        if ($thisClone->getHost() !== $thatClone->getHost()) {
-            return false;
-        }
-        if ($thisClone->getPort() !== $thatClone->getPort()) {
-            return false;
-        }
-        if ($thisClone->getPath() !== $thatClone->getPath()) {
-            return false;
-        }
-        if ($thisClone->getQuery() !== $thatClone->getQuery()) {
-            return false;
-        }
-        if ($thisClone->getFragment() !== $thatClone->getFragment()) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
