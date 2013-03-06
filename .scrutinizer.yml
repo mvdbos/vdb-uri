@@ -1,4 +1,6 @@
-tools:                
+before_commands:
+    - composer install --dev
+tools:
     php_mess_detector:
         enabled: true
         command: vendor/bin/phpmd
