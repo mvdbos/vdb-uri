@@ -1,6 +1,6 @@
 tools:
     php_mess_detector:
-        enabled: true
+        enabled: false
         filter:
             paths: [src/*, tests/*]
     php_cs_fixer: 
