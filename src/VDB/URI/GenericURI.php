@@ -186,14 +186,30 @@ class GenericURI implements URI
             $thatClone->normalize();
         }
 
-        if ($thisClone->getScheme() !== $thatClone->getScheme()) { return false; }
-        if ($thisClone->getUsername() !== $thatClone->getUsername()) { return false; }
-        if ($thisClone->getPassword() !== $thatClone->getPassword()) { return false; }
-        if ($thisClone->getHost() !== $thatClone->getHost()) { return false; }
-        if ($thisClone->getPort() !== $thatClone->getPort()) { return false; }
-        if ($thisClone->getPath() !== $thatClone->getPath()) { return false; }
-        if ($thisClone->getQuery() !== $thatClone->getQuery()) { return false; }
-        if ($thisClone->getFragment() !== $thatClone->getFragment()) { return false; }
+        if ($thisClone->getScheme() !== $thatClone->getScheme()) {
+            return false;
+        }
+        if ($thisClone->getUsername() !== $thatClone->getUsername()) {
+            return false;
+        }
+        if ($thisClone->getPassword() !== $thatClone->getPassword()) {
+            return false;
+        }
+        if ($thisClone->getHost() !== $thatClone->getHost()) {
+            return false;
+        }
+        if ($thisClone->getPort() !== $thatClone->getPort()) {
+            return false;
+        }
+        if ($thisClone->getPath() !== $thatClone->getPath()) {
+            return false;
+        }
+        if ($thisClone->getQuery() !== $thatClone->getQuery()) {
+            return false;
+        }
+        if ($thisClone->getFragment() !== $thatClone->getFragment()) {
+            return false;
+        }
 
         return true;
     }
