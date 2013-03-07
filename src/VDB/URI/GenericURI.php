@@ -1,8 +1,8 @@
 <?php
 namespace VDB\URI;
 
-use VDB\URI\Exception\UriSyntaxException;
 use ErrorException;
+use VDB\URI\Exception\UriSyntaxException;
 use VDB\URI\URI;
 
 /**
@@ -23,7 +23,7 @@ class GenericURI implements URI
     const GEN_DELIMS = ':\/\?#\[\]@';
 
     /** @var string */
-    const SUB_DELIMS  = '!\$&\'\(\)\*\+,;=';
+    const SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
 
     /** @var string GEN_DELIMS + SUB_DELIMS */
     const RESERVED = ':\/\?#\[\]@!\$&\'\(\)\*\+,;=';
@@ -64,9 +64,9 @@ class GenericURI implements URI
 
     /**
      * @param string $uri
-     * @throws Exception\UriSyntaxException
+     * @param null|string $baseUri
      *
-     * RFC 3986
+     * @throws UriSyntaxException
      */
     public function __construct($uri, $baseUri = null)
     {
@@ -141,7 +141,7 @@ class GenericURI implements URI
             if (null !== $this->host) {
                 $this->composedURI .= '//';
                 if (null !== $this->username) {
-                    $this->composedURI .=  $this->username;
+                    $this->composedURI .= $this->username;
                     if (null !== $this->password) {
                         $this->composedURI .= ':';
                         $this->composedURI .= $this->password;
@@ -366,7 +366,7 @@ class GenericURI implements URI
             $segments = explode('/', $this->path);
             foreach ($segments as &$segment) {
                 $chars = str_split(urldecode($segment));
-                for ($i=0; $i < count($chars); $i++) {
+                for ($i = 0; $i < count($chars); $i++) {
                     if (preg_match($regex, $chars[$i])) {
                         array_splice($chars, $i, 1, rawurlencode($chars[$i]));
                     }
@@ -382,7 +382,7 @@ class GenericURI implements URI
         if (null !== $this->query) {
             $regex = '/[^' . self::QUERY_OR_FRAGMENT . ']/';
             $query = str_split(urldecode($this->query));
-            for ($i=0; $i < count($query); $i++) {
+            for ($i = 0; $i < count($query); $i++) {
                 if (preg_match($regex, $query[$i])) {
                     array_splice($query, $i, 1, rawurlencode($query[$i]));
                 }
@@ -397,7 +397,7 @@ class GenericURI implements URI
         if (null !== $this->fragment) {
             $regex = '/[^' . self::QUERY_OR_FRAGMENT . ']/';
             $fragment = str_split(urldecode($this->fragment));
-            for ($i=0; $i < count($fragment); $i++) {
+            for ($i = 0; $i < count($fragment); $i++) {
                 if (preg_match($regex, $fragment[$i])) {
                     array_splice($fragment, $i, 1, rawurlencode($fragment[$i]));
                 }
