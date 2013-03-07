@@ -17,22 +17,22 @@ class GenericURI implements URI
     public static $defaultPorts = array();
 
     /** @var string */
-    const UNRESERVED = '0-9a-zA-Z\-\._~';
+    const UNRESERVED = '0-9a-zA-Z-._~';
 
     /** @var string */
-    const GEN_DELIMS = ':\/\?#\[\]@';
+    const GEN_DELIMS = ':/?#[]@';
 
     /** @var string */
-    const SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
+    const SUB_DELIMS = "!$&'()*+,;=";
 
     /** @var string GEN_DELIMS + SUB_DELIMS */
-    const RESERVED = ':\/\?#\[\]@!\$&\'\(\)\*\+,;=';
+    const RESERVED = ":/?#[]@!$&'()*+,;=";
 
-    /** @var string UNRESERVED + SUB_DELIMS + : + @ */
-    const PCHAR = '0-9a-zA-Z\-\._~!\$&\'\(\)\*\+,;=:@';
+    /** @var string UNRESERVED + SUB_DELIMS + ":" + "@" */
+    const PCHAR = "0-9a-zA-Z-._~!$&()*+,;=:@";
 
-    /** @var string PCHAR + ? + / */
-    const QUERY_OR_FRAGMENT = '^0-9a-zA-Z\-\._~!\$&\'\(\)\*\+,;=:@\?\/';
+    /** @var string PCHAR + "?" + "/" */
+    const QUERY_OR_FRAGMENT = "0-9a-zA-Z-._~!$&'()*+,;=:@?/";
 
     private $uri;
 
@@ -362,7 +362,7 @@ class GenericURI implements URI
     protected function normalizePathPercentageEncoding()
     {
         if (null !== $this->path) {
-            $regex = '/[^' . self::PCHAR . ']/';
+            $regex = '/[^' . preg_quote(self::PCHAR, '/') . ']/';
             $segments = explode('/', $this->path);
             foreach ($segments as &$segment) {
                 $chars = str_split(urldecode($segment));
@@ -379,32 +379,29 @@ class GenericURI implements URI
 
     protected function normalizeQueryPercentageEncoding()
     {
-        if (null !== $this->query) {
-            $regex = '/[^' . self::QUERY_OR_FRAGMENT . ']/';
-            $query = str_split(urldecode($this->query));
-            for ($i = 0; $i < count($query); $i++) {
-                if (preg_match($regex, $query[$i])) {
-                    array_splice($query, $i, 1, rawurlencode($query[$i]));
-                }
-            }
-            $this->query = implode('', $query);
-
-        }
+        $this->query = $this->normalizeQueryOrFragmentEncoding($this->query);
     }
 
     protected function normalizeFragmentPercentageEncoding()
     {
-        if (null !== $this->fragment) {
-            $regex = '/[^' . self::QUERY_OR_FRAGMENT . ']/';
-            $fragment = str_split(urldecode($this->fragment));
-            for ($i = 0; $i < count($fragment); $i++) {
-                if (preg_match($regex, $fragment[$i])) {
-                    array_splice($fragment, $i, 1, rawurlencode($fragment[$i]));
+        $this->fragment = $this->normalizeQueryOrFragmentEncoding($this->fragment);
+    }
+
+    protected function normalizeQueryOrFragmentEncoding($item)
+    {
+        if (null !== $item) {
+            $regex = '/[^' . preg_quote(self::QUERY_OR_FRAGMENT, '/') . ']/';
+            $chars = str_split(urldecode($item));
+            for ($i = 0; $i < count($chars); $i++) {
+                if (preg_match($regex, $chars[$i])) {
+                    array_splice($chars, $i, 1, rawurlencode($chars[$i]));
                 }
             }
-            $this->fragment = implode('', $fragment);
+            $item  = implode('', $chars);
         }
+        return $item;
     }
+
 
     protected function normalizeUsernamePercentageEncoding()
     {
