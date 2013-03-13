@@ -23,7 +23,7 @@ class HttpURI extends GenericURI
     {
         parent::validateScheme();
         $this->normalizeSchemeCase();
-        if (!in_array($this->scheme, static::$allowedSchemes)) {
+        if (null !== $this->scheme && !in_array($this->scheme, static::$allowedSchemes)) {
             throw new UriSyntaxException('Only HTTP scheme allowed');
         }
     }

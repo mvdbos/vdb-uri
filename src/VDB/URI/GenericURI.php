@@ -73,19 +73,21 @@ class GenericURI implements URI
         $this->uri = trim($uri);
         $this->remaining = $this->uri;
 
-        if ($this->hasScheme()) {
-            $this->parseAbsoluteUri();
-        } else {
-            if (null === $baseUri) {
-                throw new UriSyntaxException("No base URI provided for relative URI: '$uri'");
-            } else {
-                try {
-                    $this->baseUri = new static($baseUri);
-                } catch (UriSyntaxException $e) {
-                    throw new UriSyntaxException("Could not parse base URI: " . $e->getMessage());
+        // this handles both absolute and relative references
+        $this->parseUriReference();
+
+        // if the reference is relative AND there is a base URI, resolve the relative reference against the base URI
+        if (!$this->hasScheme() && null !== $baseUri) {
+            try {
+                $this->baseUri = new static($baseUri);
+                // The base URI has to be absolute, if not, it makes no sense to resolve against it.
+                if (!$this->baseUri->hasScheme()) {
+                    throw new UriSyntaxException("The base URI has to be absolute");
                 }
-                $this->resolveRelativeReference();
+            } catch (UriSyntaxException $e) {
+                throw new UriSyntaxException("Invalid base URI: " . $e->getMessage());
             }
+            $this->resolveRelativeReference();
         }
     }
 
@@ -171,7 +173,7 @@ class GenericURI implements URI
      * Note: will use the normalized versions of the URI's to compare
      *
      * @param URI $that
-     * @param bool $normalized wheter the comparison will be done on normalized versions of the URIs
+     * @param bool $normalized whether the comparison will be done on normalized versions of the URIs. This does not alter the arguments.
      * @return bool
      */
     public function equals(URI $that, $normalized = false)
@@ -222,7 +224,7 @@ class GenericURI implements URI
     }
 
     /**
-     * Alias of GenericURI::recompose()
+     * Alias of GenericURI::toString()
      *
      * @return string
      */
@@ -231,46 +233,78 @@ class GenericURI implements URI
         return $this->toString();
     }
 
+    /**
+     * @return null|string
+     */
     public function getHost()
     {
         return $this->host;
     }
 
+    /**
+     * @return null|string
+     */
     public function getPassword()
     {
         return $this->password;
     }
 
+    /**
+     * @return null|string
+     */
     public function getPath()
     {
         return $this->path;
     }
 
+    /**
+     * @return int|null
+     */
     public function getPort()
     {
         return $this->port;
     }
 
+    /**
+     * @return null|string
+     */
     public function getQuery()
     {
         return $this->query;
     }
 
+    /**
+     * @return null|string
+     */
     public function getScheme()
     {
         return $this->scheme;
     }
 
+    /**
+     * @return null|string
+     */
     public function getUsername()
     {
         return $this->username;
     }
 
+    /**
+     * @return null|string
+     */
     public function getFragment()
     {
         return $this->fragment;
     }
 
+    /**
+     * Normalization includes the following:
+     *  - dot segements in the path component,
+     *  - the port if it matches the default port for the scheme,
+     *  - percent encoding and character case where applicable to components, according to RFC 3986.
+     *
+     * @return $this|URI
+     */
     public function normalize()
     {
         $this->normalizeSchemeCase();
@@ -286,6 +320,9 @@ class GenericURI implements URI
         return $this;
     }
 
+    /**
+     * Override this in your subclass to do any scheme specific postprocessing
+     */
     protected function doSchemeSpecificPostProcessing()
     {
     }
@@ -306,6 +343,9 @@ class GenericURI implements URI
     {
     }
 
+    /**
+     * @throws Exception\UriSyntaxException
+     */
     protected function validatePath()
     {
         if (null === $this->authority) {
@@ -325,6 +365,9 @@ class GenericURI implements URI
     {
     }
 
+    /**
+     * @throws Exception\UriSyntaxException
+     */
     protected function validateScheme()
     {
         $schemeValidated = preg_match('/^[a-z]{1}[a-z0-9\+\-\.]*$/i', $this->scheme);
@@ -345,6 +388,9 @@ class GenericURI implements URI
     {
     }
 
+    /**
+     * @throws Exception\UriSyntaxException
+     */
     protected function validatePort()
     {
         if (empty($this->port)) {
@@ -490,13 +536,10 @@ class GenericURI implements URI
      */
     private function resolveRelativeReference()
     {
-        $this->parseUriReference();
-
         if (null !== $this->scheme) {
             $this->normalizeDotSegments();
         } else {
             $this->scheme = $this->baseUri->scheme;
-
             if (null !== $this->authority) {
                 $this->normalizeDotSegments();
             } else {
@@ -671,22 +714,6 @@ class GenericURI implements URI
             $this->validateFragment();
             $this->remaining = '';
         }
-    }
-
-    /**
-     * @throws Exception\UriSyntaxException
-     *
-     * From RFC 3986 paragraph 3
-     *
-     * URI  = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-     * hier-part = "//" authority path-abempty
-     *              / path-absolute
-     *              / path-rootless
-     *              / path-empty
-     */
-    private function parseAbsoluteUri()
-    {
-        $this->parseUriReference();
     }
 
     /**

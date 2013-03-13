@@ -24,27 +24,43 @@ Usage
 -----
 ## Example
 
-The first step is creating and URI object. In this example we will be using an HttpURI.
+The first step is creating and URI object. In this example we will be using an GenericURI.
 ```php
-use VDB\URI\HttpURI;
+use VDB\URI\GenericURI;
 
-$uri = new HttpURI('http://user:pass@example.com/foo/..?bar#baz');
+$uri = new GenericURI('http://user:pass@example.com/foo/..?bar#baz');
 ```
-Alternatively, you could use a relative URI:
+Alternatively, you could use a relative reference with a base URI to resolve it against:
 ```php
-$uri = new HttpURI('/foo/..?bar#baz', 'http://user:pass@example.com?ignored');
+$uri = new GenericURI('/foo/..?bar#baz', 'http://user:pass@example.com?ignored');
 ```
-Then we want to get the validated, normalized, recomposed string of the URI:
+Or, if no base URI is known, only supply the relative reference:
 ```php
-$parsedUriString = $uri->toString(); // http://user:pass@example.com/?bar#baz
+$relativeUri = new GenericURI('/foo/..?bar#baz');
+```
+Then we can get the validated, recomposed string of the URI:
+```php
+$parsedUriString = $uri->toString(); // 'http://user:pass@example.com/?bar#baz'
+$parsedRelativeUriString = $relativeUri->toString(); // '/foo/..?bar#baz'
+```
+Or access its separate components with accessors:
+```php
+$query = $uri->getQuery(); // 'bar'
 ```
 As an alternative to calling `toString()`, you could simple use the URI in a string context
 because `__toString()` is implemented as an alias of `toString()`.
 
+Note that normalization doesn't happen automatically, you have to call `normalize()` for that.
+Normalization includes the following:
+ - dot segements in the path component,
+ - the port if it matches the default port for the scheme,
+ - percent encoding and character case where applicable according to RFC 3986.
+The only exception to this: when constructing a relative reference WITH a base URI, the path dot segments get normalized automatically as part of resolving the relative reference against the absolute base URI.
+
 ## API
 
 The basics:
-* `__construct()`
+* `__construct($reference, $baseUri = null)`
 * `__toString()`
 * `toString()`
 
@@ -88,7 +104,7 @@ Validators. Should throw `VDB\URI\UriSyntaxException` if the component value is 
 * `validateUserInfo()`
 * `validateUsername()`
 
-See the HttpURI class for an example implementation.
+See the GenericURI class for an example implementation.
 
 ## Usage tips
 If you want to use type hinting (you should) on VDB\URI classes in your application, you can should use the URI interface for that instead of the GenericURI class.

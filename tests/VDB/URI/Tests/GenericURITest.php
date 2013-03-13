@@ -1,6 +1,7 @@
 <?php
 namespace VDB\URI\Tests;
 
+use VDB\URI\Exception\UriSyntaxException;
 use VDB\URI\GenericURI;
 
 /**
@@ -21,12 +22,30 @@ use VDB\URI\GenericURI;
 class GenericURITest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException VDB\URI\Exception\UriSyntaxException
      */
     public function testRelativeNoBase()
     {
-        new GenericURI('/foo');
+        $uri = new GenericURI('b/../c/g;x?y#s');
+
+        $this->assertNull($uri->getScheme());
+        $this->assertNull($uri->getHost());
+        $this->assertEquals('b/../c/g;x', $uri->getPath());
+        $this->assertEquals('y', $uri->getQuery());
+        $this->assertEquals('s', $uri->getFragment());
+
+        $uri->normalize();
+
+        $this->assertEquals('c/g;x', $uri->getPath());
     }
+
+    /**
+     * @expectedException VDB\URI\Exception\UriSyntaxException
+     */
+    public function testRelativeRelativeBase()
+    {
+        new GenericURI('b/c/g;x?y#s', '/foo');
+    }
+
 
     /**
      * @dataProvider relativeReferenceProvider
