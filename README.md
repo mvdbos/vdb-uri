@@ -50,7 +50,7 @@ $query = $uri->getQuery(); // 'bar'
 As an alternative to calling `toString()`, you could simple use the URI in a string context
 because `__toString()` is implemented as an alias of `toString()`.
 
-Note that normalization doesn't happen automatically, you have to call `normalize()` for that.
+> Note that normalization doesn't happen automatically, you have to call `normalize()` for that.
 Normalization includes the following:
  - dot segements in the path component,
  - the port if it matches the default port for the scheme,
