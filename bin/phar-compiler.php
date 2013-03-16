@@ -34,7 +34,7 @@ function get_src_files()
     );
 
     $dirs = array(
-        ROOT_PATH . 'src/VDB/URI',
+        ROOT_PATH . 'src/VDB/Uri',
         ROOT_PATH . 'vendor/composer'
     );
 

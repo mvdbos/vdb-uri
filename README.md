@@ -11,7 +11,7 @@ Once an URI is parsed, developers can use the URI object to get detailed informa
 
 The parser is a validating parser, that can handle URLs, URNs, and any URI scheme, such as http, mailto, ftp, etc.
 
-It is easy to create your own URI classes for specific URI schemes by extending the GenericURI, or if you are feeling adventurous, implementing the URI interface.
+It is easy to create your own URI classes for specific URI schemes by extending the Uri, or if you are feeling adventurous, implementing the URI interface.
 
 Installation
 ------------
@@ -24,19 +24,19 @@ Usage
 -----
 ## Example
 
-The first step is creating and URI object. In this example we will be using an GenericURI.
+The first step is creating and URI object. In this example we will be using an the generic Uri class.
 ```php
-use VDB\URI\GenericURI;
+use VDB\Uri\Uri;
 
-$uri = new GenericURI('http://user:pass@example.com/foo/..?bar#baz');
+$uri = new Uri('http://user:pass@example.com/foo/..?bar#baz');
 ```
 Alternatively, you could use a relative reference with a base URI to resolve it against:
 ```php
-$uri = new GenericURI('/foo/..?bar#baz', 'http://user:pass@example.com?ignored');
+$uri = new Uri('/foo/..?bar#baz', 'http://user:pass@example.com?ignored');
 ```
 Or, if no base URI is known, only supply the relative reference:
 ```php
-$relativeUri = new GenericURI('/foo/..?bar#baz');
+$relativeUri = new Uri('/foo/..?bar#baz');
 ```
 Then we can get the validated, recomposed string of the URI:
 ```php
@@ -80,11 +80,11 @@ Accessors
 * `getScheme()`
 * `getUsername()`
 
-## Subclassing GenericURI for specific schemes
+## Subclassing Uri for specific schemes
 
-Although the GenericURI class can be used to parse any URI, different URI schemes (http, https, etc.)
+Although the Uri class can be used to parse any URI, different URI schemes (http, https, etc.)
 have different rules for what is a valid URI. For example: the HTTP scheme specification states that the path component
-of a URL, if empty, should be set to '/'. The best way to implement this custom behavior is by subclassing GenericURI.
+of a URL, if empty, should be set to '/'. The best way to implement this custom behavior is by subclassing Uri.
 
 There are a few methods you can override in your subclass:
 
@@ -104,10 +104,10 @@ Validators. Should throw `VDB\URI\UriSyntaxException` if the component value is 
 * `validateUserInfo()`
 * `validateUsername()`
 
-See the GenericURI class for an example implementation.
+See the Http class for an example implementation.
 
 ## Usage tips
-If you want to use type hinting (you should) on VDB\URI classes in your application, you can should use the URI interface for that instead of the GenericURI class.
+If you want to use type hinting (you should) on VDB\Uri classes in your application, you should use the UriInterface for that instead of the Uri class.
 That way, your application will support switching out different implementations of URI classes without any refactoring.      
 
 TODO

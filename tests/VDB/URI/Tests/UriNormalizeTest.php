@@ -1,7 +1,7 @@
 <?php
-namespace VDB\URI\Tests;
+namespace VDB\Uri\Tests;
 
-use VDB\URI\GenericURI;
+use VDB\Uri\Uri;
 
 /**
  * @author Matthijs van den Bos <matthijs@vandenbos.org>
@@ -18,14 +18,14 @@ use VDB\URI\GenericURI;
  *
  *
  */
-class GenericURINormalizeTest extends \PHPUnit_Framework_TestCase
+class UriNormalizeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider normalizePercentEncodingProvider
      */
     public function testNormalizePercentEncoding($uri, $expected)
     {
-        $uri = new GenericURI($uri);
+        $uri = new Uri($uri);
         $uri->normalize();
 
         $this->assertEquals($expected, $uri->toString());
@@ -65,7 +65,7 @@ class GenericURINormalizeTest extends \PHPUnit_Framework_TestCase
      */
     public function testNormalizeCase($uri, $expected)
     {
-        $uri = new GenericURI($uri);
+        $uri = new Uri($uri);
         $uri->normalize();
 
         $this->assertEquals($expected, $uri->toString());
@@ -90,7 +90,7 @@ class GenericURINormalizeTest extends \PHPUnit_Framework_TestCase
      */
     public function testRelativeReferenceDotSegments($relative, $base, $expected)
     {
-        $uri = new GenericURI($relative, $base);
+        $uri = new Uri($relative, $base);
 
         $this->assertEquals($expected, $uri->toString());
     }
@@ -120,7 +120,7 @@ class GenericURINormalizeTest extends \PHPUnit_Framework_TestCase
      */
     public function testAbsoluteUriDotSegments($uriWithDots, $normalizedUri)
     {
-        $uri = new GenericURI($uriWithDots);
+        $uri = new Uri($uriWithDots);
         $uri->normalize();
 
         $this->assertEquals($normalizedUri, $uri->toString());
@@ -151,7 +151,7 @@ class GenericURINormalizeTest extends \PHPUnit_Framework_TestCase
      */
     public function testAbnormalRelativeReferenceDotSegments($relative, $base, $expected)
     {
-        $uri = new GenericURI($relative, $base);
+        $uri = new Uri($relative, $base);
 
         $this->assertEquals($expected, $uri->toString());
     }
@@ -191,8 +191,8 @@ class GenericURINormalizeTest extends \PHPUnit_Framework_TestCase
      */
     public function testEqualsNormalized($uri1, $uri2)
     {
-        $uri1 = new GenericURI($uri1);
-        $uri2 = new GenericURI($uri2);
+        $uri1 = new Uri($uri1);
+        $uri2 = new Uri($uri2);
 
         $uri1->normalize();
         $uri2->normalize();

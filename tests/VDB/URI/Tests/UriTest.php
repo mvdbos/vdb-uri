@@ -1,8 +1,8 @@
 <?php
-namespace VDB\URI\Tests;
+namespace VDB\Uri\Tests;
 
-use VDB\URI\Exception\UriSyntaxException;
-use VDB\URI\GenericURI;
+use VDB\Uri\Exception\UriSyntaxException;
+use VDB\Uri\Uri;
 
 /**
  * @author Matthijs van den Bos <matthijs@vandenbos.org>
@@ -25,7 +25,7 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
      */
     public function testRelativeNoBase()
     {
-        $uri = new GenericURI('b/../c/g;x?y#s');
+        $uri = new Uri('b/../c/g;x?y#s');
 
         $this->assertNull($uri->getScheme());
         $this->assertNull($uri->getHost());
@@ -43,7 +43,7 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
      */
     public function testRelativeRelativeBase()
     {
-        new GenericURI('b/c/g;x?y#s', '/foo');
+        new Uri('b/c/g;x?y#s', '/foo');
     }
 
 
@@ -52,7 +52,7 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
      */
     public function testRelativeReferenceNormal($relative, $base, $expected)
     {
-        $uri = new GenericURI($relative, $base);
+        $uri = new Uri($relative, $base);
 
         $this->assertEquals($expected, $uri->toString());
     }
@@ -90,7 +90,7 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
      */
     public function testHost($uriString, $expected)
     {
-        $uri = new GenericURI($uriString);
+        $uri = new Uri($uriString);
 
         $this->assertEquals($expected, $uri->getHost());
     }
@@ -119,7 +119,7 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
      */
     public function testNoIpSixSupport($uriString)
     {
-        new GenericURI($uriString);
+        new Uri($uriString);
     }
 
     /**
@@ -139,8 +139,8 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
      */
     public function testEqualsNotNormalized($uri1, $uri2)
     {
-        $uri = new GenericURI($uri1);
-        $this->assertTrue($uri->equals(new GenericURI($uri2)));
+        $uri = new Uri($uri1);
+        $this->assertTrue($uri->equals(new Uri($uri2)));
     }
 
     /**
@@ -148,8 +148,8 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
      */
     public function testNotEqualsNotNormalized($uri1, $uri2)
     {
-        $uri = new GenericURI($uri1);
-        $this->assertFalse($uri->equals(new GenericURI($uri2)));
+        $uri = new Uri($uri1);
+        $this->assertFalse($uri->equals(new Uri($uri2)));
     }
 
     public function equalsNotNormalizedURIProvider()

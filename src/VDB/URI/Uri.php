@@ -1,9 +1,9 @@
 <?php
-namespace VDB\URI;
+namespace VDB\Uri;
 
 use ErrorException;
-use VDB\URI\Exception\UriSyntaxException;
-use VDB\URI\URI;
+use VDB\Uri\Exception\UriSyntaxException;
+use VDB\Uri\UriInterface;
 
 /**
  * @author Matthijs van den Bos <matthijs@vandenbos.org>
@@ -12,7 +12,7 @@ use VDB\URI\URI;
  * RFC 3986
  *
  */
-class GenericURI implements URI
+class Uri implements UriInterface
 {
     public static $defaultPorts = array();
 
@@ -76,31 +76,31 @@ class GenericURI implements URI
         // this handles both absolute and relative references
         $this->parseUriReference();
 
-        // if the reference is relative AND there is a base URI, resolve the relative reference against the base URI
+        // if the reference is relative AND there is a base UriInterface, resolve the relative reference against the base UriInterface
         if (!$this->hasScheme() && null !== $baseUri) {
             try {
                 $this->baseUri = new static($baseUri);
-                // The base URI has to be absolute, if not, it makes no sense to resolve against it.
+                // The base UriInterface has to be absolute, if not, it makes no sense to resolve against it.
                 if (!$this->baseUri->hasScheme()) {
-                    throw new UriSyntaxException("The base URI has to be absolute");
+                    throw new UriSyntaxException("The base Uri has to be absolute");
                 }
             } catch (UriSyntaxException $e) {
-                throw new UriSyntaxException("Invalid base URI: " . $e->getMessage());
+                throw new UriSyntaxException("Invalid base Uri: " . $e->getMessage());
             }
             $this->resolveRelativeReference();
         }
     }
 
     /**
-     * Recomposes the components of this URI as a string.
+     * Recomposes the components of this Uri as a string.
      *
      * A string equivalent to the original input string, or to the
      * string computed from the original string, as appropriate, is
      * returned.  This can be influence bij normalization, reference resolution,
-     * and so a string is constructed from this URI's components according to
+     * and so a string is constructed from this Uri's components according to
      * the rules specified in RFC 3986 paragraph 5.3
      *
-     * @return string The string form of this URI
+     * @return string The string form of this Uri
      *
      * From RFC 3986 paragraph 5.3:
      *
@@ -169,14 +169,15 @@ class GenericURI implements URI
     }
 
     /**
-     * Test two URIs for equality. Will return true if and only if all URI components are identical.
-     * Note: will use the normalized versions of the URI's to compare
+     * Test two URIs for equality. Will return true if and only if all Uri components are identical.
+     * Note: will use the normalized versions of the Uri's to compare
      *
-     * @param URI $that
-     * @param bool $normalized whether the comparison will be done on normalized versions of the URIs. This does not alter the arguments.
+     * @param UriInterface $that
+     * @param bool $normalized whether the comparison will be done on normalized versions of the URIs.
+     *                         This does not alter the arguments.
      * @return bool
      */
-    public function equals(URI $that, $normalized = false)
+    public function equals(UriInterface $that, $normalized = false)
     {
         $thisClone = $this;
         $thatClone = $that;
@@ -224,7 +225,7 @@ class GenericURI implements URI
     }
 
     /**
-     * Alias of GenericURI::toString()
+     * Alias of Uri::toString()
      *
      * @return string
      */
@@ -303,7 +304,7 @@ class GenericURI implements URI
      *  - the port if it matches the default port for the scheme,
      *  - percent encoding and character case where applicable to components, according to RFC 3986.
      *
-     * @return $this|URI
+     * @return $this|UriInterface
      */
     public function normalize()
     {
@@ -486,15 +487,15 @@ class GenericURI implements URI
      *
      * From RFC 3986 paragraph 5.2.2
      *
-     * For each URI reference (R), the following pseudocode describes an
-     * algorithm for transforming R into its target URI (T):
+     * For each Uri reference (R), the following pseudocode describes an
+     * algorithm for transforming R into its target Uri (T):
      *
-     *    -- The URI reference is parsed into the five URI components
+     *    -- The Uri reference is parsed into the five Uri components
      *    --
      *    (R.scheme, R.authority, R.path, R.query, R.fragment) = parse(R);
      *
      *    -- A non-strict parser may ignore a scheme in the reference
-     *    -- if it is identical to the base URI's scheme.
+     *    -- if it is identical to the base Uri's scheme.
      *    --
      *    if ((not strict) and (R.scheme == Base.scheme)) then
      *       undefine(R.scheme);
@@ -719,7 +720,7 @@ class GenericURI implements URI
     /**
      * From RFC 3986 paragraph 4.1
      *
-     * URI-reference = URI / relative-ref
+     * Uri-reference = Uri / relative-ref
      */
     private function parseUriReference()
     {

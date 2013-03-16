@@ -1,5 +1,5 @@
 <?php
-namespace VDB\URI\Exception;
+namespace VDB\Uri\Exception;
 
 /**
  * @author Matthijs van den Bos <matthijs@vandenbos.org>

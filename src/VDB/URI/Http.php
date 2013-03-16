@@ -1,8 +1,8 @@
 <?php
-namespace VDB\URI;
+namespace VDB\Uri;
 
-use VDB\URI\GenericURI;
-use VDB\URI\Exception\UriSyntaxException;
+use VDB\Uri\Uri;
+use VDB\Uri\Exception\UriSyntaxException;
 
 /**
  * @author Matthijs van den Bos <matthijs@vandenbos.org>
@@ -14,7 +14,7 @@ use VDB\URI\Exception\UriSyntaxException;
  * Note: different from RFC 3986, empty path should become '/';
  *
  */
-class HttpURI extends GenericURI
+class Http extends Uri
 {
     public static $allowedSchemes = array('http', 'https');
     public static $defaultPorts = array('http' => 80, 'https' => 443);

@@ -1,11 +1,11 @@
 <?php
-namespace VDB\URI;
+namespace VDB\Uri;
 
 /**
  * @author Matthijs van den Bos <matthijs@vandenbos.org>
  * @copyright 2013 Matthijs van den Bos
  */
-interface URI
+interface UriInterface
 {
     /**
      * @param string $uri
@@ -16,32 +16,32 @@ interface URI
     public function __construct($uri, $baseUri = null);
 
     /**
-     * Recomposes the components of this URI as a string.
+     * Recomposes the components of this Uri as a string.
      *
      * A string equivalent to the original input string, or to the
      * string computed from the original string, as appropriate, is
      * returned.  This can be influence bij normalization, reference resolution,
-     * and so a string is constructed from this URI's components according to
+     * and so a string is constructed from this Uri's components according to
      * the rules specified in RFC 3986 paragraph 5.3
      *
-     * @return string The string form of this URI
+     * @return string The string form of this Uri
      */
     public function toString();
 
     /**
-     * @param URI $that
+     * @param UriInterface $that
      * @param boolean $normalized whether to compare normalized versions of the URIs
      * @return boolean
      */
-    public function equals(URI $that, $normalized = false);
+    public function equals(UriInterface $that, $normalized = false);
 
     /**
-     * @return URI
+     * @return UriInterface
      */
     public function normalize();
 
     /**
-     * Alias of URI::toString()
+     * Alias of Uri::toString()
      *
      * @return string
      */
