@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/matthijsvandenbos/vdb-uri.png?branch=master)](https://travis-ci.org/matthijsvandenbos/vdb-uri)
+[![Build Status](https://travis-ci.org/mvdbos/vdb-uri.svg?branch=master)](https://travis-ci.org/mvdbos/vdb-uri)
 
 README
 ======
@@ -15,7 +15,7 @@ It is easy to create your own URI classes for specific URI schemes by extending 
 
 Installation
 ------------
-The easiest way to install PHP-Spider is by downloading [vdb-uri.phar](https://github.com/matthijsvandenbos/vdb-uri/raw/master/bin/vdb-uri.phar).
+The easiest way to install VDB\URI is by downloading [vdb-uri.phar](https://github.com/matthijsvandenbos/vdb-uri/raw/master/bin/vdb-uri.phar).
 Then you only have to require the Phar file to begin using VDB\URI: `require_once '/path/to/vdb-uri.phar';`
 
 A more flexible way to install VDB\URI is with [composer](http://getcomposer.org/). That way you can keep control over which version you use. Find it on http://packagist.org under the name `vdb/uri`.
