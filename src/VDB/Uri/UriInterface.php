@@ -8,14 +8,6 @@ namespace VDB\Uri;
 interface UriInterface
 {
     /**
-     * @param string $uri
-     * @throws VDB\URI\Exception\UriSyntaxException
-     *
-     * RFC 3986
-     */
-    public function __construct($uri, $baseUri = null);
-
-    /**
      * Recomposes the components of this Uri as a string.
      *
      * A string equivalent to the original input string, or to the
