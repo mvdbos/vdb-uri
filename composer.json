@@ -14,9 +14,9 @@
         "php": ">=5.3.2"
     },
     "autoload": {
-        "psr-0": {
-            "VDB\\Uri": "src/",
-            "VDB\\Uri\\Tests": "tests/"
+        "psr-4": {
+            "VDB\\Uri\\": "src/",
+            "VDB\\Uri\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev"
