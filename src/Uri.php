@@ -189,39 +189,18 @@ class Uri implements UriInterface
             $thatClone->normalize();
         }
 
-        if ($thisClone->getScheme() !== $thatClone->getScheme()) {
-            return false;
-        } else {
-            if ($thisClone->getUsername() !== $thatClone->getUsername()) {
-                return false;
-            } else {
-                if ($thisClone->getPassword() !== $thatClone->getPassword()) {
-                    return false;
-                } else {
-                    if ($thisClone->getHost() !== $thatClone->getHost()) {
-                        return false;
-                    } else {
-                        if ($thisClone->getPort() !== $thatClone->getPort()) {
-                            return false;
-                        } else {
-                            if ($thisClone->getPath() !== $thatClone->getPath()) {
-                                return false;
-                            } else {
-                                if ($thisClone->getQuery() !== $thatClone->getQuery()) {
-                                    return false;
-                                } else {
-                                    if ($thisClone->getFragment() !== $thatClone->getFragment()) {
-                                        return false;
-                                    } else {
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        $componentsCheckResults = [
+            $thisClone->getScheme() == $thatClone->getScheme(),
+            $thisClone->getUsername() == $thatClone->getUsername(),
+            $thisClone->getPassword() == $thatClone->getPassword(),
+            $thisClone->getHost() == $thatClone->getHost(),
+            $thisClone->getPort() == $thatClone->getPort(),
+            $thisClone->getPath() == $thatClone->getPath(),
+            $thisClone->getQuery() == $thatClone->getQuery(),
+            $thisClone->getFragment() == $thatClone->getFragment()
+        ];
+
+        return  !in_array(false, $componentsCheckResults);
     }
 
     /**
