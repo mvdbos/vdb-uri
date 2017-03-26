@@ -189,7 +189,7 @@ class Uri implements UriInterface
             $thatClone->normalize();
         }
 
-        $componentsCheckResults = [
+        $componentsCheckResults = array(
             $thisClone->getScheme() == $thatClone->getScheme(),
             $thisClone->getUsername() == $thatClone->getUsername(),
             $thisClone->getPassword() == $thatClone->getPassword(),
@@ -198,7 +198,7 @@ class Uri implements UriInterface
             $thisClone->getPath() == $thatClone->getPath(),
             $thisClone->getQuery() == $thatClone->getQuery(),
             $thisClone->getFragment() == $thatClone->getFragment()
-        ];
+        );
 
         return  !in_array(false, $componentsCheckResults);
     }
