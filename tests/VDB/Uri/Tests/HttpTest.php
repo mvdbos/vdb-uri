@@ -2,7 +2,8 @@
 
 namespace VDB\Uri\Tests;
 
-use VDB\Uri\Uri;
+use PHPUnit\Framework\TestCase;
+use VDB\Uri\Http;
 
 /**
  * @author Matthijs van den Bos <matthijs@vandenbos.org>
@@ -19,13 +20,13 @@ use VDB\Uri\Uri;
  *
  *
  */
-class GenericURITest extends \PHPUnit_Framework_TestCase
+class HttpsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      */
     public function testRelativeNoBase()
     {
-        $uri = new Uri('b/../c/g;x?y#s');
+        $uri = new Http('b/../c/g;x?y#s');
 
         $this->assertNull($uri->getScheme());
         $this->assertNull($uri->getHost());
@@ -41,7 +42,7 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
     public function testRelativeRelativeBase()
     {
         $this->expectException("\VDB\URI\Exception\UriSyntaxException");
-        new Uri('b/c/g;x?y#s', '/foo');
+        new Http('b/c/g;x?y#s', '/foo');
     }
 
 
@@ -50,7 +51,7 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
      */
     public function testRelativeReferenceNormal($relative, $base, $expected)
     {
-        $uri = new Uri($relative, $base);
+        $uri = new Http($relative, $base);
 
         $this->assertEquals($expected, $uri->toString());
     }
@@ -65,7 +66,6 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
         return array(
             array("foo", 'http://a/b/c/d;p?q#bar', "http://a/b/c/foo"), // base URI fragment should be ignored
             array("http://foo", 'http://a/b/c/d;p?q', "http://foo"), // if rel has scheme, base is effectively ignored
-            array("g:h", 'http://a/b/c/d;p?q', "g:h"),
             array("g", 'http://a/b/c/d;p?q', "http://a/b/c/g"),
             array("g/", 'http://a/b/c/d;p?q', "http://a/b/c/g/"),
             array("/g", 'http://a/b/c/d;p?q', "http://a/g"),
@@ -89,7 +89,7 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
      */
     public function testHost($uriString, $expected)
     {
-        $uri = new Uri($uriString);
+        $uri = new Http($uriString);
 
         $this->assertEquals($expected, $uri->getHost());
     }
@@ -101,14 +101,8 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
     public function hostURIProvider()
     {
         return array(
-            array('ftp:', ''),
-            array('ftp://ftp.is.co.za/rfc/rfc1808.txt', 'ftp.is.co.za'),
-            array('mailto:John.Doe@example.com', ''),
-            array('news:comp.infosystems.www.servers.unix', ''),
-            array('tel:+1-816-555-1212', ''),
-            array('telnet://192.0.2.16:80/', '192.0.2.16'),
-            array('urn:oasis:names:specification:docbook:dtd:xml:4.1.2', ''),
-            array('foo://example.com:8042/over/there?name=ferret#nose', 'example.com'),
+            array('http://192.0.2.16:80/', '192.0.2.16'),
+            array('https://example.com:8042/over/there?name=ferret#nose', 'example.com'),
         );
     }
 
@@ -119,14 +113,9 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
     public function toStringProvider()
     {
         return array(
-            array('ftp:', 'ftp:'),
-            array('ftp://ftp.is.co.za/rfc/rfc1808.txt', 'ftp://ftp.is.co.za/rfc/rfc1808.txt'),
-            array('mailto:John.Doe@example.com', 'mailto:John.Doe@example.com'),
-            array('news:comp.infosystems.www.servers.unix', 'news:comp.infosystems.www.servers.unix'),
-            array('tel:+1-816-555-1212', 'tel:+1-816-555-1212'),
-            array('telnet://192.0.2.16:80/', 'telnet://192.0.2.16:80/'),
-            array('urn:oasis:names:specification:docbook:dtd:xml:4.1.2', 'urn:oasis:names:specification:docbook:dtd:xml:4.1.2'),
-            array('foo://example.com:8042/over/there?name=ferret#nose', 'foo://example.com:8042/over/there?name=ferret#nose'),
+            array('http://192.0.2.16:80/', 'http://192.0.2.16/'),
+            array('https://example.com:443/over/there?name=ferret#nose', 'https://example.com/over/there?name=ferret#nose'),
+            array('https://example.com:8042/over/there?name=ferret#nose', 'https://example.com:8042/over/there?name=ferret#nose'),
         );
     }
 
@@ -137,8 +126,8 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
      */
     public function testToString($uriString, $expected)
     {
-        $uri = new Uri($uriString);
-
+        $uri = new Http($uriString);
+        $uri->normalize();
         $this->assertEquals($expected, $uri->toString());
     }
 
@@ -148,7 +137,7 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
     public function testNoIpSixSupport($uriString)
     {
         $this->expectException("\VDB\URI\Exception\UriSyntaxException");
-        new Uri($uriString);
+        new Http($uriString);
     }
 
     /**
@@ -168,8 +157,8 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
      */
     public function testEqualsNotNormalized($uri1, $uri2)
     {
-        $uri = new Uri($uri1);
-        $this->assertTrue($uri->equals(new Uri($uri2)));
+        $uri = new Http($uri1);
+        $this->assertTrue($uri->equals(new Http($uri2)));
     }
 
     /**
@@ -177,8 +166,8 @@ class GenericURITest extends \PHPUnit_Framework_TestCase
      */
     public function testNotEqualsNotNormalized($uri1, $uri2)
     {
-        $uri = new Uri($uri1);
-        $this->assertFalse($uri->equals(new Uri($uri2)));
+        $uri = new Http($uri1);
+        $this->assertFalse($uri->equals(new Http($uri2)));
     }
 
     public function equalsNotNormalizedURIProvider()

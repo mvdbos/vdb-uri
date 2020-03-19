@@ -5,3 +5,5 @@ TODO.md
 example/logs/*.log
 *.doctrinecache.php
 .DS_Store
+composer.phar
+.phpunit.result.cache

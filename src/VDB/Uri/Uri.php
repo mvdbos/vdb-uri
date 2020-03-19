@@ -151,6 +151,10 @@ class Uri implements UriInterface
                     $this->composedURI .= '@';
                 }
                 $this->composedURI .= $this->host;
+
+                if (null !== $this->port) {
+                    $this->composedURI .= ":" . $this->port;
+                }
             }
 
             $this->composedURI .= $this->path;

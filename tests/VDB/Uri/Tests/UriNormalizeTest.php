@@ -1,6 +1,8 @@
 <?php
+
 namespace VDB\Uri\Tests;
 
+use PHPUnit\Framework\TestCase;
 use VDB\Uri\Uri;
 
 /**
