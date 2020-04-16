@@ -1,7 +1,7 @@
 <?php
+
 namespace VDB\Uri;
 
-use VDB\Uri\Uri;
 use VDB\Uri\Exception\UriSyntaxException;
 
 /**
@@ -30,7 +30,7 @@ class Http extends Uri
 
     protected function doSchemeSpecificPostProcessing()
     {
-        if (null === $this->path) {
+        if (null === $this->path || "" === $this->path) {
             $this->path = '/';
         }
     }

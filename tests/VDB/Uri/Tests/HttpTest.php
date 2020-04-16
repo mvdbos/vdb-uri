@@ -2,7 +2,6 @@
 
 namespace VDB\Uri\Tests;
 
-use PHPUnit\Framework\TestCase;
 use VDB\Uri\Http;
 
 /**
@@ -65,11 +64,11 @@ class HttpsTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array("foo", 'http://a/b/c/d;p?q#bar', "http://a/b/c/foo"), // base URI fragment should be ignored
-            array("http://foo", 'http://a/b/c/d;p?q', "http://foo"), // if rel has scheme, base is effectively ignored
+            array("http://foo", 'http://a/b/c/d;p?q', "http://foo/"), // if rel has scheme, base is effectively ignored
             array("g", 'http://a/b/c/d;p?q', "http://a/b/c/g"),
             array("g/", 'http://a/b/c/d;p?q', "http://a/b/c/g/"),
             array("/g", 'http://a/b/c/d;p?q', "http://a/g"),
-            array("//g", 'http://a/b/c/d;p?q', "http://g"),
+            array("//g", 'http://a/b/c/d;p?q', "http://g/"),
             array("?y", 'http://a/b/c/d;p?q', "http://a/b/c/d;p?y"),
             array("g?y", 'http://a/b/c/d;p?q', "http://a/b/c/g?y"),
             array("#s", 'http://a/b/c/d;p?q', "http://a/b/c/d;p?q#s"),

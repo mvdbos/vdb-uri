@@ -1,9 +1,9 @@
 <?php
+
 namespace VDB\Uri;
 
 use ErrorException;
 use VDB\Uri\Exception\UriSyntaxException;
-use VDB\Uri\UriInterface;
 
 /**
  * @author Matthijs van den Bos <matthijs@vandenbos.org>
@@ -66,7 +66,7 @@ class Uri implements UriInterface
      * @param string $uri
      * @param null|string $baseUri
      *
-     * @throws UriSyntaxException
+     * @throws UriSyntaxException|ErrorException
      */
     public function __construct($uri, $baseUri = null)
     {
@@ -89,6 +89,8 @@ class Uri implements UriInterface
             }
             $this->resolveRelativeReference();
         }
+
+        $this->doSchemeSpecificPostProcessing();
     }
 
     /**
@@ -448,7 +450,7 @@ class Uri implements UriInterface
                     array_splice($chars, $i, 1, rawurlencode($chars[$i]));
                 }
             }
-            $item  = implode('', $chars);
+            $item = implode('', $chars);
         }
         return $item;
     }
@@ -649,7 +651,7 @@ class Uri implements UriInterface
         }
     }
 
-    private function hasScheme()
+    protected function hasScheme()
     {
         $pos = strpos($this->uri, ':');
         if (false === $pos) {
@@ -733,8 +735,6 @@ class Uri implements UriInterface
         $this->parsePath();
         $this->parseQuery();
         $this->parseFragment();
-
-        $this->doSchemeSpecificPostProcessing();
 
         if (strlen($this->remaining)) {
             throw new ErrorException("Still something left after parsing, shouldn't happen: '$this->remaining'");
