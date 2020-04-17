@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mvdbos/vdb-uri.svg?branch=master)](https://travis-ci.org/mvdbos/vdb-uri)
+![Build Status](https://github.com/mvdbos/vdb-uri/workflows/VDB%5CURI/badge.svg?branch=master) 
 [![Latest Stable Version](https://poser.pugx.org/vdb/uri/v/stable)](https://packagist.org/packages/vdb/uri)
 [![Total Downloads](https://poser.pugx.org/vdb/uri/downloads)](https://packagist.org/packages/vdb/uri)
 [![License](https://poser.pugx.org/vdb/uri/license)](https://packagist.org/packages/vdb/uri)
