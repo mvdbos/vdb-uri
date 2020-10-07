@@ -17,9 +17,13 @@
         "phpunit/phpunit": "^5.1"
     },
     "autoload": {
-        "psr-0": {
-            "VDB\\Uri": "src/",
-            "VDB\\Uri\\Tests": "tests/"
+        "psr-4": {
+            "VDB\\Uri\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "VDB\\Uri\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev"
