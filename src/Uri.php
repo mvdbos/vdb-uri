@@ -93,6 +93,15 @@ class Uri implements UriInterface
         $this->doSchemeSpecificPostProcessing();
     }
 
+    public function toBaseUri()
+    {
+        $base = clone $this;
+        $base->path = null;
+        $base->query = null;
+        $base->fragment = null;
+        return $base->normalize();
+    }
+
     /**
      * Recomposes the components of this Uri as a string.
      *
@@ -605,6 +614,8 @@ class Uri implements UriInterface
      */
     private function normalizeDotSegments()
     {
+        if ($this->path == null) return;
+
         $input = explode('/', $this->path);
         $output = array();
 

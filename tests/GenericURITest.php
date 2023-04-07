@@ -45,6 +45,25 @@ class GenericURITest extends TestCase
         new Uri('b/c/g;x?y#s', '/foo');
     }
 
+    /**
+     * @dataProvider baseProvider
+     */
+    public function testToBase($base, $full)
+    {
+        $uri = new Uri($full);
+       $this->assertEquals($base, $uri->toBaseUri());
+       $this->assertEquals($full, $uri->toString());
+    }
+
+    /**
+     * @return array
+     */
+    public function baseProvider()
+    {
+        return array(
+            array('http://example.com', 'http://example.com/foo?bar#baz'),
+        );
+    }
 
     /**
      * @dataProvider relativeReferenceProvider
