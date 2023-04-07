@@ -462,12 +462,16 @@ class Uri implements UriInterface
 
     protected function normalizeSchemeCase()
     {
-        $this->scheme = strtolower($this->scheme);
+        if ($this->scheme != null) {
+            $this->scheme = strtolower($this->scheme);
+        }
     }
 
     protected function normalizeHostCase()
     {
-        $this->host = strtolower($this->host);
+        if ($this->host != null) {
+            $this->host = strtolower($this->host);
+        }
     }
 
     protected function normalizePort()
