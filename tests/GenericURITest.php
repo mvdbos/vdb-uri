@@ -2,6 +2,7 @@
 
 namespace VDB\Uri\Tests;
 
+use PHPUnit\Framework\TestCase;
 use VDB\Uri\Uri;
 
 /**
@@ -19,7 +20,7 @@ use VDB\Uri\Uri;
  *
  *
  */
-class GenericURITest extends \PHPUnit_Framework_TestCase
+class GenericURITest extends TestCase
 {
     /**
      */

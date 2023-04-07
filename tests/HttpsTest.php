@@ -2,6 +2,7 @@
 
 namespace VDB\Uri\Tests;
 
+use PHPUnit\Framework\TestCase;
 use VDB\Uri\Http;
 
 /**
@@ -19,7 +20,7 @@ use VDB\Uri\Http;
  *
  *
  */
-class HttpsTest extends \PHPUnit_Framework_TestCase
+class HttpsTest extends TestCase
 {
     /**
      */

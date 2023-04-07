@@ -20,7 +20,7 @@ use VDB\Uri\Uri;
  *
  *
  */
-class UriNormalizeTest extends \PHPUnit_Framework_TestCase
+class UriNormalizeTest extends TestCase
 {
     /**
      * @dataProvider normalizePercentEncodingProvider
