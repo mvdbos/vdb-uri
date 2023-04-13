@@ -17,7 +17,7 @@ use VDB\Uri\Exception\UriSyntaxException;
 class Http extends Uri
 {
     public static $allowedSchemes = array('http', 'https');
-    public static $defaultPorts = array('http' => 80, 'https' => 443);
+    public static array $defaultPorts = array('http' => 80, 'https' => 443);
 
     protected function validateScheme()
     {
@@ -25,6 +25,24 @@ class Http extends Uri
         $this->normalizeSchemeCase();
         if (null !== $this->scheme && !in_array($this->scheme, static::$allowedSchemes)) {
             throw new UriSyntaxException('Only HTTP scheme allowed');
+        }
+    }
+
+    /**
+     * @throws Exception\UriSyntaxException
+     */
+    protected function validatePath()
+    {
+        if (null === $this->authority) {
+            if ('//' === substr($this->path, 0, 2)) {
+                throw new UriSyntaxException(
+                    "Invalid path: '" . $this->path . "'. Can't begin with '//' if no authority was found"
+                );
+            }
+        } else {
+            if (!empty($this->path) && '/' !== substr($this->path, 0, 1)) {
+                throw new UriSyntaxException("Invalid path: '" . $this->path);
+            }
         }
     }
 

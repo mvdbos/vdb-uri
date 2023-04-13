@@ -14,7 +14,7 @@ use VDB\Uri\Exception\UriSyntaxException;
  */
 class Uri implements UriInterface
 {
-    public static $defaultPorts = array();
+    public static array $defaultPorts = array();
 
     /** @var string */
     const UNRESERVED = '0-9a-zA-Z-._~';
@@ -34,41 +34,41 @@ class Uri implements UriInterface
     /** @var string PCHAR + "?" + "/" */
     const QUERY_OR_FRAGMENT = "0-9a-zA-Z-._~!$&'()*+,;=:@?/";
 
-    private $uri;
+    private string $uri;
 
-    private $baseUri;
+    protected Uri $baseUri;
 
-    private $remaining;
+    private string $remaining;
 
-    private $composedURI;
+    private ?string $composedURI = null;
 
-    protected $authority;
+    protected ?string $authority = null;
 
-    protected $userInfo;
+    protected ?string $userInfo = null;
 
-    protected $scheme;
+    protected ?string $scheme = null;
 
-    protected $host;
+    protected ?string $host = null;
 
-    protected $port;
+    protected ?int $port = null;
 
-    protected $path;
+    protected ?string $path = null;
 
-    protected $query;
+    protected ?string $query = null;
 
-    protected $fragment;
+    protected ?string $fragment = null;
 
-    protected $username;
+    protected ?string $username = null;
 
-    protected $password;
+    protected ?string $password = null;
 
     /**
      * @param string $uri
-     * @param null|string $baseUri
+     * @param string|null $baseUri
      *
      * @throws UriSyntaxException|ErrorException
      */
-    public function __construct($uri, $baseUri = null)
+    public function __construct(string $uri, string $baseUri = null)
     {
         $this->uri = trim($uri);
         $this->remaining = $this->uri;
@@ -141,7 +141,7 @@ class Uri implements UriInterface
      *
      * return result;
      */
-    public function toString()
+    public function toString(): ?string
     {
         if (null === $this->composedURI) {
             $this->composedURI = '';
@@ -151,7 +151,7 @@ class Uri implements UriInterface
                 $this->composedURI .= ':';
             }
 
-            if (null !== $this->host) {
+            if (null !== $this->host && strlen($this->host) > 0) {
                 $this->composedURI .= '//';
                 if (null !== $this->username) {
                     $this->composedURI .= $this->username;
@@ -192,7 +192,7 @@ class Uri implements UriInterface
      *                         This does not alter the arguments.
      * @return bool
      */
-    public function equals(UriInterface $that, $normalized = false)
+    public function equals(UriInterface $that, $normalized = false): bool
     {
         $thisClone = $this;
         $thatClone = $that;
@@ -252,7 +252,7 @@ class Uri implements UriInterface
     /**
      * @return null|string
      */
-    public function getHost()
+    public function getHost(): ?string
     {
         return $this->host;
     }
@@ -260,7 +260,7 @@ class Uri implements UriInterface
     /**
      * @return null|string
      */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -268,7 +268,7 @@ class Uri implements UriInterface
     /**
      * @return null|string
      */
-    public function getPath()
+    public function getPath(): ?string
     {
         return $this->path;
     }
@@ -276,7 +276,7 @@ class Uri implements UriInterface
     /**
      * @return int|null
      */
-    public function getPort()
+    public function getPort(): ?int
     {
         return $this->port;
     }
@@ -284,7 +284,7 @@ class Uri implements UriInterface
     /**
      * @return null|string
      */
-    public function getQuery()
+    public function getQuery(): ?string
     {
         return $this->query;
     }
@@ -292,7 +292,7 @@ class Uri implements UriInterface
     /**
      * @return null|string
      */
-    public function getScheme()
+    public function getScheme(): ?string
     {
         return $this->scheme;
     }
@@ -300,7 +300,7 @@ class Uri implements UriInterface
     /**
      * @return null|string
      */
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return $this->username;
     }
@@ -308,7 +308,7 @@ class Uri implements UriInterface
     /**
      * @return null|string
      */
-    public function getFragment()
+    public function getFragment(): ?string
     {
         return $this->fragment;
     }
@@ -549,8 +549,9 @@ class Uri implements UriInterface
      *    endif;
      *
      *    T.fragment = R.fragment;
+     * @throws UriSyntaxException
      */
-    private function resolveRelativeReference()
+    protected function resolveRelativeReference()
     {
         if (null !== $this->scheme) {
             $this->normalizeDotSegments();
@@ -559,20 +560,20 @@ class Uri implements UriInterface
             if (null !== $this->authority) {
                 $this->normalizeDotSegments();
             } else {
-                $this->authority = $this->baseUri->authority;
-                $this->parseUserInfoHostPort();
+                if (null !== $this->baseUri->authority) {
+                    $this->authority = $this->baseUri->authority;
+                    $this->parseUserInfoHostPort();
+                }
                 if ('' === $this->path) {
                     $this->path = $this->baseUri->path;
                     if (null === $this->query) {
                         $this->query = $this->baseUri->query;
                     }
                 } else {
-                    if (0 === strpos($this->path, '/')) {
-                        $this->normalizeDotSegments();
-                    } else {
+                    if (0 !== strpos($this->path, '/')) {
                         $this->mergeBasePath();
-                        $this->normalizeDotSegments();
                     }
+                    $this->normalizeDotSegments();
                 }
             }
         }
@@ -612,7 +613,7 @@ class Uri implements UriInterface
      *     remove_dot_segments.
      *
      */
-    private function normalizeDotSegments()
+    protected function normalizeDotSegments()
     {
         if ($this->path == null) return;
 
@@ -650,7 +651,7 @@ class Uri implements UriInterface
     /**
      * From RFC 3986 paragraph 5.2.3
      */
-    private function mergeBasePath()
+    protected function mergeBasePath()
     {
         if (null !== $this->baseUri->authority && '' === $this->baseUri->path) {
             $this->path = '/' . $this->path;
@@ -662,15 +663,14 @@ class Uri implements UriInterface
         }
     }
 
-    protected function hasScheme()
+    protected function hasScheme(): bool
     {
-        $pos = strpos($this->uri, ':');
-        if (false === $pos) {
-            return false;
-        }
-        return true;
+        return $this->scheme != null;
     }
 
+    /**
+     * @throws UriSyntaxException
+     */
     private function parseScheme()
     {
         if (false !== $pos = strpos($this->remaining, ':')) {
@@ -681,6 +681,9 @@ class Uri implements UriInterface
         }
     }
 
+    /**
+     * @throws UriSyntaxException
+     */
     private function parseAuthority()
     {
         if ('//' === substr($this->remaining, 0, 2)) {
@@ -696,6 +699,9 @@ class Uri implements UriInterface
         }
     }
 
+    /**
+     * @throws UriSyntaxException
+     */
     private function parsePath()
     {
         $this->path = $this->scanUntilFirstOf($this->remaining, '?#');
@@ -738,6 +744,8 @@ class Uri implements UriInterface
      * From RFC 3986 paragraph 4.1
      *
      * Uri-reference = Uri / relative-ref
+     * @throws UriSyntaxException
+     * @throws ErrorException
      */
     private function parseUriReference()
     {
@@ -752,7 +760,7 @@ class Uri implements UriInterface
         }
     }
 
-    private function parseUserInfoHostPort()
+    protected function parseUserInfoHostPort()
     {
         if (!$this->authority) {
             throw new UriSyntaxException("Can't parse userInfo, host, port: no authority determined");
@@ -792,7 +800,7 @@ class Uri implements UriInterface
         }
     }
 
-    private function scanUntilFirstOf($string, $characters)
+    private function scanUntilFirstOf($string, $characters): string
     {
         if (false === strpbrk($string, $characters)) {
             return $string;

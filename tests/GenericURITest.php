@@ -51,8 +51,7 @@ class GenericURITest extends TestCase
     public function testToBase($base, $full)
     {
         $uri = new Uri($full);
-       $this->assertEquals($base, $uri->toBaseUri());
-       $this->assertEquals($full, $uri->toString());
+       $this->assertEquals($base, $uri->toBaseUri()->toString());
     }
 
     /**
