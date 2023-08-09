@@ -792,8 +792,7 @@ class Uri implements UriInterface
             $this->host = substr($remaining, 0, $colonPos);
             $this->validateHost();
             // we do + 1 because we need to skip the ':' character
-            $this->port = substr($remaining, $colonPos + 1);
-            $this->port = (int)$this->port;
+            $this->port = (int)substr($remaining, $colonPos + 1);
             $this->validatePort();
         } else {
             $this->host = $remaining;
