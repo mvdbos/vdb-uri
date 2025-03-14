@@ -68,7 +68,7 @@ class Uri implements UriInterface
      *
      * @throws UriSyntaxException|ErrorException
      */
-    public function __construct(string $uri, string $baseUri = null)
+    public function __construct(string $uri, ?string $baseUri = null)
     {
         $this->uri = trim($uri);
         $this->remaining = $this->uri;
